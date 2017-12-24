@@ -59,23 +59,18 @@ async function introspect( opts){
 			  doc= new Document(),
 			  got= await intr
 			doc.body.innerHTML= got
-			// follow all node links
-			var nodes= doc.documentElement.querySelectorAll( "node")
-			nodes.forEach( node=> addPath( node.getAttribute("name"), path))
-			// read methods
-			var method= doc.documentElement.querySelectorAll("method").map( Method.parse)
-			// read properties
-			var property= doc.documentElement.querySelectorAll("property").map( Property.parse)
-			// read signals
-			var signal= doc.documentElement.querySelectorAll("signal").map( Signal.parse)
+			var interfacesArray= doc.documentElement.querySelectorAll("interface").map( Interface.parse)
+			var interfaces= interfacesArray.reduce(( acc, cur)=> (acc[ cur.name]= cur, cur.path= path, cur), {})
 			var result= {
 				name: serviceName,
 				path,
-				method,
-				property,
-				signal
+				interfaces
 			}
 			opts.result[ path]= result
+
+			// follow all node links
+			var nodes= doc.documentElement.querySelectorAll( "node")
+			nodes.forEach( node=> addPath( node.getAttribute("name"), path))
 		})
 		all.push( introspect)
 		return introspect
@@ -86,8 +81,26 @@ async function introspect( opts){
 export default introspect
 
 export class Interface{
-	static parse( name, path, dom){
-		
+	static parse( dom, path){
+		// name, path, dom
+		var name= dom.getAttribute( "name")
+		// read methods
+		var method= dom.querySelectorAll("method").map( Method.parse)
+		// read properties
+		var property= dom.querySelectorAll("property").map( Property.parse)
+		// read signals
+		var signal= dom.querySelectorAll("signal").map( Signal.parse)
+		var result= {
+			name,
+			path,
+			method,
+			property,
+			signal
+		}
+		return new Interface( result)
+	}
+	constructor( opts){
+		Object.assign( this, opts)
 	}
 	// name, path, method, property, signal
 }
