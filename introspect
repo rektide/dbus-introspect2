@@ -3,7 +3,5 @@
 var
   esm= require( "@std/esm")( module),
   main= esm( "./main.js")
-console.log(Object.keys( main))
-console.log(main.main)
 main.debugMode()
 main.main()
