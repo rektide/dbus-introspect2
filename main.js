@@ -29,14 +29,39 @@ export async function main( opts){
 		.then( console.log.bind( console)) // show the root path
 }
 
-export async function signalListen( path){
+function True(){
+	return true
+}
+
+export async function signalListen( path, iface, signalName){
+	if( typeof( iface)=== "string"){
+		var _iface= iface
+		iface= function( val){
+			return val=== _iface
+		}
+	}
+	if( !iface){
+		iface= True
+	}
+	if( typeof( signalName)=== "string"){
+		var _signalName= signalName
+		signalName= function( val){
+			return val=== _signalName
+		}
+	}
+	if( !signalName){
+		signalName= True
+	}
 	var
 	  ctx= await exec()
-	  run= Object.keys( ctx).map(async function( key){
+	  run= Object.keys( ctx).map(async function( pathKey){
 		var
-		  path= ctx[ key],
-		  signals= path.signals
-		//dbus.getInterface( key, path.name)
+		  path= ctx[ pathKey],
+		  allIfaces= Object.keys( path),
+		  filtered= allIfaces.filter( iface),
+		  running= filtered.map( async function( _iface){
+			var iface= path[ _iface]
+		  })
 		
 	  })
 }
