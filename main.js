@@ -34,7 +34,7 @@ export async function exec( opts){
 }
 
 export function main( opts){
-	exec().then( result=> console.log( opts.result))
+	exec().then( console.log.bind( console))
 }
 
 export default main;
