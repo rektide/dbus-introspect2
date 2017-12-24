@@ -1,7 +1,9 @@
 import allInAll from "all-in-all"
-import {Document} from "basichtml"
+import basichtml from "basichtml"
 import Dbus from "./dbus.js"
 import promisify from "es6-promisify"
+
+const Document= basichtml.Document
 
 async function introspect( opts){
 	if( typeof( opts)=== "string"){
@@ -23,7 +25,8 @@ async function introspect( opts){
 		opts.result= {}
 	}
 	var
-	  _service= dbus.getService( service),
+	  serviceName= opts.service,
+	  _service= opts.dbus.getService( serviceName),
 	  getInterface= promisify( _service.getInterface, _service),
 	  knownPaths= {},
 	  all= []
@@ -53,7 +56,7 @@ async function introspect( opts){
 			// read introspection doc in
 			var
 			  introspect= promisify(iface.Introspect, iface)(),
-			  doc= new Document(),
+			  doc= new Document()
 			doc.innerHTML= iface
 			// follow all node links
 			var nodes= doc.querySelectorAll( "node")
@@ -65,13 +68,13 @@ async function introspect( opts){
 			// read signals
 			var signal= doc.querySelectorAll("signal").map( Signal.parse)
 			var result= {
-				name,
+				name: serviceName,
 				path,
 				method,
 				property,
 				signal
 			}
-			opts.result.push( result)
+			opts.result[ path]= result
 		})
 		all.push( introspect)
 	}

@@ -12,6 +12,6 @@ export default function(){
 	return _default()
 }
 
-export function setDefault( default){
-	_default= default
+export function setDefault( de_fault){
+	_default= de_fault
 }

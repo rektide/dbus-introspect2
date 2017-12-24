@@ -7,6 +7,10 @@ export let defaults= {
 	busName: "default"
 }
 
+export function debugMode(){
+	process.on( "unhandledRejection", err=> console.error( err))
+}
+
 export async function exec( opts){
 	function o( a){
 		return opts&& opts[ a]
@@ -16,7 +20,7 @@ export async function exec( opts){
 	  service= o( "service")|| process.env[ p+ "SERVICE"]|| process.argv[2]|| defaults.service,
 	  busName= o( "busName")|| process.env[ p+ "DBUS"]|| defaults.busName,
 	  dbus= o( "dbus")|| Dbus[ busName](), // "session", "system" or "default" or else
-	  path= o( "path")|| processe.env[ p+ "PATH"], // undefined aok: underlying `introspect` default is "/" which is great. it recurses through (c.o. all-in-one dependency).
+	  path= o( "path")|| process.env[ p+ "PATH"], // undefined aok: underlying `introspect` default is "/" which is great. it recurses through (c.o. all-in-one dependency).
 	  nodes= o( "nodes")|| [], // permits userland a reference to nodes, which will grow through all descendants of the path
 	  params= o( "paams")||{
 		service,
@@ -25,12 +29,12 @@ export async function exec( opts){
 		nodes
 	  },
 	  result= await introspect( params),
-	  recombinantFpShit= result.then( result=> Object.assign({}, params, { result}))
+	  recombinantFpShit= Object.assign({}, params, { result})
 	return recombinantFpShit
 }
 
 export function main( opts){
-	exec.then( result=> console.log( opts.result))
+	exec().then( result=> console.log( opts.result))
 }
 
 export default main;
