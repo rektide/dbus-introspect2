@@ -30,11 +30,13 @@ export async function exec( opts){
 	  },
 	  result= await introspect( params),
 	  recombinantFpShit= Object.assign({}, params, { result})
-	return recombinantFpShit
+	return recombinantFpShit // this is actually how i like to combine stuff, slowly, declaratively.
 }
 
-export function main( opts){
-	exec().then( console.log.bind( console))
+export async function main( opts){
+	return await exec()
+		.then( r=> JSON.stringify( r.result, null, '\t'))
+		.then( console.log.bind( console)) // show the root path
 }
 
 export default main;

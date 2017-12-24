@@ -68,12 +68,6 @@ async function introspect( opts){
 			var property= doc.documentElement.querySelectorAll("property").map( Property.parse)
 			// read signals
 			var signal= doc.documentElement.querySelectorAll("signal").map( Signal.parse)
-			console.log({lengths:{
-				//html: doc.documentElement.innerHTML,
-				method: method.length,
-				property: property.length,
-				signal: signal.length
-			}})
 			var result= {
 				name: serviceName,
 				path,
@@ -81,7 +75,6 @@ async function introspect( opts){
 				property,
 				signal
 			}
-			console.log("add")
 			opts.result[ path]= result
 		})
 		all.push( introspect)
@@ -117,7 +110,6 @@ export class Param{
 export class Arg extends Param{
 	static parse( dom, klass, tag){
 		if( dom.tagName!== (tag|| "arg")){
-			console.log({tagName: dom.tagName, tag})
 			throw new TypeError("Incorrect tag")
 		}
 		var name= dom.getAttribute( "name")
@@ -181,7 +173,7 @@ export class Signal extends Member{
 
 export class SignalArg extends Arg{
 	static parse( dom){
-		return new SignalArg( dom)
+		return Arg.parse( dom, SignalArg)
 	}
 	// +
 }
