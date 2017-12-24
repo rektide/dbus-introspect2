@@ -69,7 +69,7 @@ async function introspect( opts){
 			// read signals
 			var signal= doc.documentElement.querySelectorAll("signal").map( Signal.parse)
 			console.log({lengths:{
-				html: doc.documentElement.innerHTML,
+				//html: doc.documentElement.innerHTML,
 				method: method.length,
 				property: property.length,
 				signal: signal.length
@@ -81,9 +81,11 @@ async function introspect( opts){
 				property,
 				signal
 			}
+			console.log("add")
 			opts.result[ path]= result
-			all.push( introspect)
 		})
+		all.push( introspect)
+		return introspect
 	}
 	addPath( opts.path)
 	return allInAll( all).then( ()=> opts.result)

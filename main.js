@@ -22,7 +22,7 @@ export async function exec( opts){
 	  dbus= o( "dbus")|| Dbus[ busName](), // "session", "system" or "default" or else
 	  path= o( "path")|| process.env[ p+ "PATH"], // undefined aok: underlying `introspect` default is "/" which is great. it recurses through (c.o. all-in-one dependency).
 	  nodes= o( "nodes")|| [], // permits userland a reference to nodes, which will grow through all descendants of the path
-	  params= o( "paams")||{
+	  params= o( "params")||{
 		service,
 		dbus,
 		path,
