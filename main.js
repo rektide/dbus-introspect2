@@ -8,7 +8,7 @@ export let defaults= {
 	
 }
 
-function main( opts){
+function exec( opts){
 	function o( a){
 		return opts&& opts[ a]
 	}
@@ -19,13 +19,20 @@ function main( opts){
 	  dbus= Dbus[ busName](), // "session", "system" or "default" or else
 	  path= processe.env[ p+ "PATH"] // undefined aok: underlying `introspect` default is "/" which is great. it recurses through (c.o. all-in-one dependency).
 	  nodes= [], // permits userland a reference to nodes, which will grow through all descendants of the path
-	  result= introspect({
+	  params= {
 		service,
 		dbus,
 		path,
 		nodes
-	  })
-	return result
+	  },
+	  result= introspect(params),
+	  recombinantFpShit= result.then( result=> { result, ..params})
+	return recombinantFpShit
 }
+
+function main( opts){
+	exec.then( result=> console.log( opts.result)
+}
+
 export default main;
 export main;
