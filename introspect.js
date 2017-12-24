@@ -99,8 +99,13 @@ export class Interface{
 
 export class Param{
 	// name, type
-	static parse( dom){
-		throw new TypeError("Param is virtual")
+	static parse( dom, klass, tag){
+		if( !tag|| !klass){
+			throw new TypeError("Param is virtual")
+		}
+		var name= dom.getAttribute( "name")
+		var type= dom.getAttribute( "type")
+		return new klass({ name, type})
 	}
 	constructor( opts){
 		Object.assign( this, opts)
@@ -111,7 +116,7 @@ export class Arg extends Param{
 	static parse( dom, klass, tag){
 		if( dom.tagName!== (tag|| "arg")){
 			console.log({tagName: dom.tagName, tag})
-			throw new typeerror("Incorrect tag")
+			throw new TypeError("Incorrect tag")
 		}
 		var name= dom.getAttribute( "name")
 		var type= dom.getAttribute( "type")
@@ -159,7 +164,7 @@ export class Property extends Member{
 	static parse( dom){
 		var data= Param.parse( dom, Property, "property")
 		data.access= dom.getAttribute( "access")
-		return new data
+		return data
 	}
 }
 
@@ -173,6 +178,9 @@ export class Signal extends Member{
 }
 
 export class SignalArg extends Arg{
+	static parse( dom){
+		return new SignalArg( dom)
+	}
 	// +
 }
 
