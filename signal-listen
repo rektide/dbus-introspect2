@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+"use strict"
+
+// wait for a 
+var
+  esm= require( "@std/esm")( module),
+  main= esm( "./main.js")
+main.debugMode()
+main.signalListen()
