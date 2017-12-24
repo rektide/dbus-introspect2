@@ -60,11 +60,11 @@ async function introspect( opts){
 			  got= await intr
 			doc.body.innerHTML= got
 			var interfacesArray= doc.documentElement.querySelectorAll("interface").map( Interface.parse)
-			var interfaces= interfacesArray.reduce(( acc, cur)=> (acc[ cur.name]= cur, console.log("CUR", cur.name), cur.path= path, acc), {})
+			var interfaces= interfacesArray.reduce(( acc, cur)=> (acc[ cur.name]= cur, cur.path= path, acc), {})
 			var result= {
 				name: serviceName,
 				path,
-				interfaces
+				interface: interfaces
 			}
 			opts.result[ path]= result
 

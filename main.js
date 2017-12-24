@@ -1,4 +1,5 @@
 import Introspect from "./introspect.js"
+import promisify from "es6-promisify"
 import * as Dbus from "./dbus"
 
 export let defaults= {
@@ -13,15 +14,22 @@ export function debugMode(){
 }
 
 export async function introspect( opts){
+	opts= opts|| {}
+	if( opts.then){
+		opts= await opts
+	}
 	var
-	  e= await env(),
+	  e= await env( opts),
 	  result= await Introspect( e),
-	  recombinantFpShit= Object.assign({}, e, { result})
+	  recombinantFpShit= Object.assign(e, { result})
 	return recombinantFpShit // this is actually how i like to combine stuff, slowly, declaratively.
 }
 
 export async function main( opts){
 	opts= opts|| {}
+	if( opts.then){
+		opts= await opts
+	}
 	var filter= opts.execFilter|| defaults.execFilter|| function(i){return i}
 	var fn= opts.fn|| introspect
 	return await fn()
@@ -53,16 +61,23 @@ export async function signalListen( path, iface, signalName){
 		signalName= True
 	}
 	var
-	  ctx= await exec()
-	  run= Object.keys( ctx).map(async function( pathKey){
+	  e= await env(),
+	  intro= (await introspect( e)).result,
+	  service= e.dbus.getService( e.service),
+	  getInterface= promisify( service.getInterface, service),
+	  run= Object.values( intro).map(async function( path){
 		var
-		  path= ctx[ pathKey],
-		  allIfaces= Object.keys( path),
-		  filtered= allIfaces.filter( iface),
-		  running= filtered.map( async function( _iface){
-			var iface= path[ _iface]
-		  })
-		
+		  allIfaces= Object.values( path.interface|| []),
+		  filteredIfaces= allIfaces.filter( i=> iface( i.name))
+		async function runIface( iface){
+			var signals= (iface.signal|| []).filter( s=> signalName( s.name))
+			if( !signals.length){
+				return
+			}
+			var dbusIface= await getInterface( path.path, path.name)
+			signals.forEach( s=> dbusIface.on( s.name, console.log.bind( console)))
+		}
+		return Promise.all( filteredIfaces.map(runIface))
 	  })
 }
 
