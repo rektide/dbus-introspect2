@@ -50,23 +50,30 @@ async function introspect( opts){
 
 		// record interface
 		var iface= getInterface( path, "org.freedesktop.DBus.Introspectable")
-		var introspect= iface.then( function( iface){
+		var introspect= iface.then( async function( iface){
 			// remember path
 			iface.path= path
 			// read introspection doc in
 			var
-			  introspect= promisify(iface.Introspect, iface)(),
-			  doc= new Document()
-			doc.innerHTML= iface
+			  intr= promisify( iface.Introspect, iface)(),
+			  doc= new Document(),
+			  got= await intr
+			doc.body.innerHTML= got
 			// follow all node links
-			var nodes= doc.querySelectorAll( "node")
+			var nodes= doc.documentElement.querySelectorAll( "node")
 			nodes.forEach( node=> addPath( node.getAttribute("name"), path))
 			// read methods
-			var method= doc.querySelectorAll("method").map( Method.parse)
+			var method= doc.documentElement.querySelectorAll("method").map( Method.parse)
 			// read properties
-			var property= doc.querySelectorAll("property").map( Property.parse)
+			var property= doc.documentElement.querySelectorAll("property").map( Property.parse)
 			// read signals
-			var signal= doc.querySelectorAll("signal").map( Signal.parse)
+			var signal= doc.documentElement.querySelectorAll("signal").map( Signal.parse)
+			console.log({lengths:{
+				html: doc.documentElement.innerHTML,
+				method: method.length,
+				property: property.length,
+				signal: signal.length
+			}})
 			var result= {
 				name: serviceName,
 				path,
@@ -75,8 +82,8 @@ async function introspect( opts){
 				signal
 			}
 			opts.result[ path]= result
+			all.push( introspect)
 		})
-		all.push( introspect)
 	}
 	addPath( opts.path)
 	return allInAll( all).then( ()=> opts.result)
