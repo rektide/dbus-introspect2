@@ -18,5 +18,8 @@
 		"basichtml": "^0.12.1",
 		"dbus-native": "^0.2.3",
 		"es6-promisify": "^5.0.0"
+	},
+	"devDependencies": {
+		"@std/esm": "^0.18.0"
 	}
 }

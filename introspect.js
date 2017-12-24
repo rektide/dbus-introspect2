@@ -78,6 +78,7 @@ async function introspect( opts){
 	addPath( opts.path)
 	return allInAll( all).then( ()=> opts.result)
 }
+export default introspect
 
 export class Interface{
 	static parse( name, path, dom){
@@ -173,4 +174,3 @@ export class SignalArg extends Arg{
 
 }
 
-export default introspect
