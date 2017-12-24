@@ -109,7 +109,8 @@ export class Param{
 
 export class Arg extends Param{
 	static parse( dom, klass, tag){
-		if( dom.tagname!== (tag|| "arg")){
+		if( dom.tagName!== (tag|| "arg")){
+			console.log({tagName: dom.tagName, tag})
 			throw new typeerror("Incorrect tag")
 		}
 		var name= dom.getAttribute( "name")
@@ -126,7 +127,10 @@ export class Member{
 		}
 		var name= dom.getAttribute( "name")
 		return new klass({ name})
-	}	
+	}
+	constructor( opts){
+		Object.assign( this, opts)
+	}
 }
 
 export class Method extends Member{
@@ -139,10 +143,6 @@ export class Method extends Member{
 		var arg= dom.querySelectorAll( "arg").map( MethodArg.parse)
 		return new Method({ name, arg})
 	}
-	constructor( opts){
-		Object.assign( this, opts)
-	}
-
 }
 
 export class MethodArg extends Arg{
@@ -170,17 +170,9 @@ export class Signal extends Member{
 		var arg= dom.querySelectorAll( "arg").map( SignalArg.parse)
 		return new Signal({ name, arg})
 	}
-	constructor( opts){
-		Object.assign( this, opts)
-	}
-
 }
 
 export class SignalArg extends Arg{
 	// +
-	constructor( opts){
-		Object.assign( this, opts)
-	}
-
 }
 
