@@ -4,7 +4,8 @@ import * as Dbus from "./dbus"
 export let defaults= {
 	prefix: "INTROSPECT_",
 	service: "org.freedesktop.DBus",
-	busName: "default"
+	busName: "default",
+	execFilter: x=> JSON.stringify( x.result, null, '\t')
 }
 
 export function debugMode(){
@@ -34,8 +35,9 @@ export async function exec( opts){
 }
 
 export async function main( opts){
+	var filter= opts&& opts.execFilter|| defaults.execFilter|| function(i){return i}
 	return await exec()
-		.then( r=> JSON.stringify( r.result, null, '\t'))
+		.then( filter)
 		.then( console.log.bind( console)) // show the root path
 }
 
