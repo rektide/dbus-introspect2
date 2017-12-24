@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 "use strict"
 var
-  esm= require( "@std/esm"),
+  esm= require( "@std/esm")( module),
   main= esm( "./main.js")
-main.default()
+console.log(Object.keys( main))
+console.log(main.main)
+main.main()
