@@ -37,6 +37,14 @@ export async function main( opts){
 		.then( console.log.bind( console)) // show the root path
 }
 
+export async function listNames(){
+	var
+	  mod= await import( "./list-names.js"),
+	  names= await mod.default()
+	console.log( names)
+}
+
+
 function True(){
 	return true
 }
@@ -76,6 +84,7 @@ export async function signalListen( path, iface, signalName){
 			}
 			var dbusIface= await getInterface( path.path, path.name)
 			signals.forEach( s=> dbusIface.on( s.name, console.log.bind( console)))
+			//signals.forEach( s=> console.log({ signal: s.name, path: path.path, interface: path.name}))
 		}
 		return Promise.all( filteredIfaces.map(runIface))
 	  })
