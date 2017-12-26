@@ -22,6 +22,7 @@ export async function introspect( opts){
 	  e= await env( opts),
 	  result= await Introspect( e),
 	  recombinantFpShit= Object.assign(e, { result})
+	e.dbus.connection.end()
 	return recombinantFpShit // this is actually how i like to combine stuff, slowly, declaratively.
 }
 
@@ -37,11 +38,18 @@ export async function main( opts){
 		.then( console.log.bind( console)) // show the root path
 }
 
-export async function listNames(){
+export async function listNames( opts){
 	var
 	  mod= await import( "./list-names.js"),
-	  names= await mod.default()
-	console.log( names)
+	  e= await env( opts),
+	  names= await mod.default( e)
+	for( var name of names){
+		if( e.allNames|| name.startsWith(":")){
+			continue
+		}
+		console.log( name)
+	}
+	e.dbus.connection.end()
 }
 
 
@@ -109,7 +117,7 @@ export async function env( opts){
 		path,
 		nodes
 	  }
-	return params
+	return Object.assign({}, opts, params)
 }
 
 export default main;
